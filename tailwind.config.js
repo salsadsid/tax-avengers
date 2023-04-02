@@ -11,11 +11,11 @@ module.exports = {
       {
         taxAvengers:{
           primary:"#008427",
-          "secondary": "#F000B8",     
+          "secondary": "#005d1f",     
           "accent": "#d7f2fd",       
           "neutral": "#d0eed8",        
           "base-100": "#FFFFFF",        
-          "info": "#3ABFF8",        
+          "info": "#f1f5f7",        
           "success": "#36D399",
           "warning": "#FBBD23",        
           "error": "#F87272",

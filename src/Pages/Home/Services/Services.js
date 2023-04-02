@@ -25,7 +25,7 @@ const Services = () => {
           <img src={img} className="md:absolute relative left-0 w-40" alt="" />
         </div>
         <p className="text-xl text-white my-4 md:w-1/2 w-full text-center">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+          Lorem ipsum dolor sit amet, consectetur elit.
         </p>
         <h1 className="text-4xl font-bold text-white text-center my-4">
           File the way you want with Tax Avengers
@@ -36,7 +36,7 @@ const Services = () => {
         <div>
           <img
             src={img2}
-            className="md:absolute relative bottom-0 right-0 w-40"
+            className="md:absolute relative md:bottom-1/2 bottom-0 right-0 w-40"
             alt=""
           />
         </div>
