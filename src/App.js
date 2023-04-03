@@ -1,5 +1,7 @@
 import { RouterProvider } from "react-router-dom";
 import router from "./Routes/Routes";
+import 'react-day-picker/dist/style.css';
+
 
 function App() {
  

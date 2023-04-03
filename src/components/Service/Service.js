@@ -2,6 +2,7 @@ import React from "react";
 import img from "../../assets/portrait2.png";
 import { FiArrowRight } from "react-icons/fi";
 import { TiTick } from "react-icons/ti";
+import SecondaryButton from "../SecondaryButton/SecondaryButton";
 
 const Service = () => {
   return (
@@ -41,9 +42,8 @@ const Service = () => {
         <p className="mt-28 text-sm">starting at</p>
         <p className="text-4xl font-bold">$80</p>
         <p className="text-sm">+ Additional state charges</p>
-        <button className="btn rounded-full w-full mt-12 btn-primary normal-case m-0 md:mr-8 text-lg py-3 shadow-sm pb-10 text-white">
-            Contact us now
-          </button>
+        <SecondaryButton> Contact us now
+          </SecondaryButton>
       </div>
     </div>
   );
