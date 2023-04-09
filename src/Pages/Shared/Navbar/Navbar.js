@@ -1,27 +1,37 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext, useState } from "react";
+import { Link } from "react-router-dom";
+import { CgProfile } from "react-icons/cg";
+import { AuthContext } from "../../../context/AuthProvider";
 
 const Navbar = () => {
-    const [navbar, setNavbar] = useState(false);
+  const [navbar, setNavbar] = useState(false);
+  const { user,logOut } = useContext(AuthContext);
 
-    const menuItems=<React.Fragment>
-<li className="hover:text-secondary">
-                  <Link to='/'>Home</Link>
-                </li>
-                <li className=" hover:text-secondary">
-                  <Link to='/appointment'>Appointment</Link>
-                </li>
-                <li className=" hover:text-secondary">
-                  <Link href="javascript:void(0)">About US</Link>
-                </li>
-                <li className=" hover:text-secondary">
-                  <Link href="javascript:void(0)">Contact US</Link>
-                </li>
+  const handleSignOut=()=>{
+    logOut()
+    .then(res=>{})
+    .catch(error=>console.error(error))
+  }
+  const menuItems = (
+    <React.Fragment>
+      <li className="hover:text-secondary">
+        <Link to="/">Home</Link>
+      </li>
+      <li className=" hover:text-secondary">
+        <Link to="/appointment">Appointment</Link>
+      </li>
+      <li className=" hover:text-secondary">
+        <Link to="/dashboard">Dashboard</Link>
+      </li>
+      <li className=" hover:text-secondary">
+        {user?.uid && <Link to="javascript:void(0)">Contact US</Link>}
+      </li>
     </React.Fragment>
-    return (
-        <nav className="w-full bg-white sticky top-0 z-40">
-        <div className="justify-between mx-auto lg:max-w-7xl md:items-center md:flex px-4">
-          <div className="md:flex md:items-center">
+  );
+  return (
+    <nav className="w-full bg-white sticky top-0 z-40">
+      <div className="justify-between mx-auto lg:max-w-7xl md:items-center md:flex px-4">
+        <div className="md:flex md:items-center">
           <div>
             <div className="flex items-center justify-between py-3 md:py-5 md:block">
               <Link href="javascript:void(0)">
@@ -76,39 +86,86 @@ const Navbar = () => {
               </ul>
 
               <div className="mt-3 space-y-2 lg:hidden md:inline-block">
-                <Link
-                  href="javascript:void(0)"
-                  className="inline-block w-full px-4 py-2 text-center text-white bg-gray-600 rounded-md shadow hover:bg-gray-800"
-                >
-                  Sign in
-                </Link>
-                <Link
-                  href="javascript:void(0)"
-                  className="inline-block w-full px-4 py-2 text-center text-gray-800 bg-white rounded-md shadow hover:bg-gray-100"
-                >
-                  Sign up
-                </Link>
+                {user?.uid ? (
+                  <>
+                    <Link
+                     
+                      className="inline-block px-5 py-3 shadow  btn btn-md rounded-full btn-primary normal-case m-0 mr-8 text-white text-lg w-full"
+                    >
+                      <button className="mr-2">
+                  <CgProfile></CgProfile>
+                </button>
+                {user?.displayName ? user?.displayName :  user.email.split("@")[0]}
+                    </Link>
+                    <button
+                      onClick={handleSignOut}
+                      className="btn btn-md bg-gray-100 inline-block w-full border-0 rounded-full text-lg px-5 py-3 normal-case hover:bg-black text-black hover:text-white  shadow"
+                    >
+                      Sign Out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to="login"
+                      className="btn btn-md bg-gray-100 inline-block w-full border-0 rounded-full text-lg px-5 py-3 normal-case hover:bg-black text-black hover:text-white  shadow"
+                    >
+                      Sign in
+                    </Link>
+                    <Link
+                      to="signup"
+                      className="inline-block px-5 py-3 shadow  btn btn-md rounded-full btn-primary normal-case m-0 mr-8 text-white text-lg w-full"
+                    >
+                      Sign up
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>
-          </div>
-          <div className="hidden space-x-2 md:inline-block">
-            <Link
-              href="javascript:void(0)"
-              className="px-4 py-2 text-white bg-gray-600 rounded-md shadow hover:bg-gray-800"
-            >
-              Sign in
-            </Link>
-            <Link
-              href="javascript:void(0)"
-              className="px-4 py-2 text-gray-800 bg-white rounded-md shadow hover:bg-gray-100"
-            >
-              Sign up
-            </Link>
-          </div>
         </div>
-      </nav>
-    );
+        <div className="hidden space-x-2 md:inline-block">
+          {user?.uid ? (
+            <>
+              <Link
+                to=""
+                className="px-5 py-3 inline shadow border-0  btn btn-md rounded-full btn-primary normal-case m-0 text-white text-lg w-full"
+              >
+                <button className="mr-2">
+                  <CgProfile></CgProfile>
+                </button>
+                {user?.displayName ? user?.displayName :  user.email.split("@")[0]}
+              </Link>
+              <button
+                onClick={handleSignOut}
+                className="btn btn-md bg-gray-100 inline border-0 rounded-full text-lg px-5 py-3 normal-case hover:bg-black text-black hover:text-white  shadow"
+              >
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="login"
+                className="btn btn-md bg-gray-100 inline border-0 rounded-full text-lg px-5 py-3 normal-case hover:bg-black text-black hover:text-white  shadow"
+              >
+                Sign in
+              </Link>
+              <Link
+                to="signup"
+                className="px-5 py-3 inline shadow border-0  btn btn-md rounded-full btn-primary normal-case m-0 text-white text-lg w-full"
+              >
+                <button className="mr-2">
+                  <CgProfile></CgProfile>
+                </button>
+                Sign up
+              </Link>
+            </>
+          )}
+        </div>
+      </div>
+    </nav>
+  );
 };
 
 export default Navbar;
