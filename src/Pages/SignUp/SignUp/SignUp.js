@@ -1,13 +1,14 @@
 import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../context/AuthProvider';
+import { toast } from 'react-hot-toast';
 
 const SignUp = () => {
     const [loginError,setLoginError]= useState('')
     const {register,handleSubmit,formState:{errors},watch} =useForm()
     const {createUser,updateUser}= useContext(AuthContext)
-
+    const navigate=useNavigate()
   const handleSignUp=data=>{
     setLoginError("")
     createUser(data.email,data.password)
@@ -18,7 +19,22 @@ const SignUp = () => {
             displayName: data.name
         }
         updateUser(user,userInfo)
-        .then(()=>{})
+        .then(()=>{
+          navigate("/");
+          toast.success("Logged in Successfully", {
+            style: {
+              background: "#1FAA59",
+              color:"#fff"
+            },
+            // Custom Icon
+            icon: "👏",
+            // Change colors of success/error/loading icon
+            iconTheme: {
+              primary: "#000",
+              secondary: "#fff",
+            },
+          });
+        })
         .catch(error=>console.error(error))
     })
     .catch(error=>{

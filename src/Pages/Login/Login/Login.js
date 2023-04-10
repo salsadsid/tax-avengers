@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../context/AuthProvider';
+import { toast } from 'react-hot-toast';
 
 const Login = () => {
   const [loginError,setLoginError]= useState('')
@@ -17,6 +18,19 @@ const Login = () => {
       .then(res=>{
         if(res.user){
           navigate(from,{replace:true})
+          toast.success("Logged in Successfully", {
+            style: {
+              background: "#1FAA59",
+              color:"#fff"
+            },
+            // Custom Icon
+            icon: "👏",
+            // Change colors of success/error/loading icon
+            iconTheme: {
+              primary: "#000",
+              secondary: "#fff",
+            },
+          });
         }
       })
       .catch(error=>{

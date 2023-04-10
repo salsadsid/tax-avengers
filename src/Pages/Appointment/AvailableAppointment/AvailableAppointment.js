@@ -3,10 +3,11 @@ import React, {useState } from 'react';
 import AppointmentOption from '../../../components/AppointmentOption/AppointmentOption';
 import BookingModal from '../../../components/BookingModal/BookingModal';
 import { useQuery } from '@tanstack/react-query';
+import Loading from '../../../components/Loading/Loading';
 
 const AvailableAppointment = ({selectedDate}) => {
     const [appointmentOption,setAppointmentOption]=useState(null)
-
+    const date = format(selectedDate, "PP");
     //using fetch only
     // const{data:appointmentOptions=[]}=useQuery({
     //     queryKey:['appointmentOptions'],
@@ -15,16 +16,18 @@ const AvailableAppointment = ({selectedDate}) => {
     //         .then(res=>res.json())
     // })
 
-    const{data:appointmentOptions=[] ,status}=useQuery({
-        queryKey:['appointmentOptions'],
+    const{data:appointmentOptions=[] ,status,refetch,isLoading}=useQuery({
+        queryKey:['appointmentOptions',date],
         queryFn:async()=>{
-            const res = await fetch('http://localhost:5000/appointmentOption')
+            const res = await fetch(`http://localhost:5000/appointmentOption?date=${date}`)
             const data = res.json()
             return data
         }
     })
 
-    console.log(status)
+    if(isLoading){
+        return <Loading></Loading>
+    }
     return (
         <div>
             <p className='text-2xl font-bold my-10 text-center'>Available Appointment on : {format(selectedDate,"PP")} </p>
@@ -35,8 +38,12 @@ const AvailableAppointment = ({selectedDate}) => {
                     ></AppointmentOption>)
                 }
             </div>
-            {appointmentOption && <BookingModal appointmentOption={appointmentOption} selectedDate={selectedDate}>
-
+            {appointmentOption && <BookingModal 
+            appointmentOption={appointmentOption} 
+            selectedDate={selectedDate}
+            setAppointmentOption={setAppointmentOption}
+            refetch={refetch}
+            >
             </BookingModal>}
         </div>
     );

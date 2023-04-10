@@ -85,7 +85,7 @@ const Navbar = () => {
                 {menuItems}
               </ul>
 
-              <div className="mt-3 space-y-2 lg:hidden md:inline-block">
+              <div className="mt-3 space-y-2 md:hidden md:inline-block">
                 {user?.uid ? (
                   <>
                     <Link
