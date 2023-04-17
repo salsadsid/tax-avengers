@@ -38,6 +38,8 @@ async function run() {
       .collection("appointmentOption");
     const bookingCollection = client.db("tax-avengers").collection("booking");
     const userCollection = client.db("tax-avengers").collection("user");
+    const membersCollection = client.db("tax-avengers").collection("members");
+    
 
     app.get("/appointmentOption", async (req, res) => {
       const date = req?.query?.date;
@@ -61,6 +63,11 @@ async function run() {
       res.send(options);
     });
 
+    app.get("/apptionmentSpecialty",async(req,res)=>{
+      const query={}
+      const result = await appointmentOption.find(query).project({name:1}).toArray()
+      res.send(result)
+    })
     // not working
     // app.get("/v2/appointmentOption", async (req, res) => {
     //   const date = req.query.date;
@@ -192,6 +199,20 @@ async function run() {
       const result = await userCollection.insertOne(user);
       res.send(result);
     });
+
+    app.post("/members",async(req,res)=>{
+      const member = req.body;
+      console.log(member)
+      const result= await membersCollection.insertOne(member);
+      res.send(result)
+    })
+
+    app.get("/members",async(req,res)=>{
+      const query={}
+      const members= await membersCollection.find(query).toArray()
+      res.send(members)
+    })
+
   } finally {
   }
 }
