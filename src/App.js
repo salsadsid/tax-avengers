@@ -4,6 +4,7 @@ import "react-day-picker/dist/style.css";
 import { Toaster } from "react-hot-toast";
 
 function App() {
+  console.log(process.env.REACT_APP_storageBucket)
   return (
     <div className="max-w-[1600px] mx-auto">
       <RouterProvider router={router}></RouterProvider>

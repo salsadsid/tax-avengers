@@ -10,6 +10,8 @@ import DashboardLayout from "../Layout/DashboardLayout";
 import MyAppointments from "../Pages/Dashboard/MyAppointments/MyAppointments";
 import AllUsers from "../Pages/Dashboard/AllUsers/AllUsers";
 import AdminRoute from "./AdminRoute";
+import AddATeamMember from "../Pages/Dashboard/AddATeamMember/AddATeamMember";
+import ManageMembers from "../Pages/Dashboard/ManageMembers/ManageMembers";
 
 const router = createBrowserRouter([
     {
@@ -45,6 +47,14 @@ const router = createBrowserRouter([
             {
                 path:"/dashboard/allusers",
                 element:<AdminRoute><AllUsers></AllUsers></AdminRoute>
+            },
+            {
+                path:"/dashboard/addteammember",
+                element:<AdminRoute><AddATeamMember></AddATeamMember></AdminRoute>
+            },
+            {
+                path:"/dashboard/managemember",
+                element:<AdminRoute><ManageMembers></ManageMembers></AdminRoute>
             },
         ]
     }
