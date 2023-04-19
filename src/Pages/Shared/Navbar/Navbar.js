@@ -1,13 +1,19 @@
-import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
 import { AuthContext } from "../../../context/AuthProvider";
 
 const Navbar = () => {
   const [navbar, setNavbar] = useState(false);
   const [dashboard, setDashboard] = useState(false);
+  const [hiddenDashboard,setHiddenDashboard]=useState(false)
   const { user,logOut } = useContext(AuthContext);
-
+  const location = useLocation()
+  useEffect(()=>{
+    if(location.pathname.includes("dashboard")){
+      setHiddenDashboard(true)
+    }
+  },[location.pathname])
   const handleSignOut=()=>{
     logOut()
     .then(res=>{})
@@ -30,12 +36,12 @@ const Navbar = () => {
     </React.Fragment>
   );
   return (
-    <nav className="w-full bg-white sticky top-0 z-40">
+    <nav className="w-full bg-white sticky top-0 z-30">
       <div className="justify-between mx-auto lg:max-w-7xl md:items-center md:flex px-4">
         <div className="md:flex md:items-center">
           <div>
             <div className="flex items-center justify-between py-3 md:py-5 md:block">
-            <label htmlFor="dashboard" className="p-2 text-gray-700 rounded-md outline-none focus:border-gray-400 drawer-button lg:hidden cursor-pointer"
+            {hiddenDashboard &&  <label htmlFor="dashboard" className="p-2 text-gray-700 rounded-md outline-none focus:border-gray-400 drawer-button lg:hidden cursor-pointer"
             onClick={() => setDashboard(!dashboard)}
             >{dashboard ? (
               <svg
@@ -65,7 +71,7 @@ const Navbar = () => {
                   d="M4 6h16M4 12h16M4 18h16"
                 />
               </svg>
-            )}</label>
+            )}</label>}
               <Link href="javascript:void(0)">
              
          

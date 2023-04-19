@@ -1,12 +1,15 @@
 import React, { useContext } from "react";
 import Navbar from "../Pages/Shared/Navbar/Navbar";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider";
 import useAdmin from "../hook/useAdmin";
 
 const DashboardLayout = () => {
   const { user } = useContext(AuthContext);
   const [isAdmin] = useAdmin(user?.email);
+
+  const location=useLocation()
+  
   return (
     <div>
       <Navbar></Navbar>
@@ -17,7 +20,7 @@ const DashboardLayout = () => {
         </div>
         <div className="drawer-side">
           <label htmlFor="dashboard" className="drawer-overlay"></label>
-          <ul className="menu p-4 w-80 bg-base-100 text-base-content">
+          <ul className="menu p-4 w-80 bg-base-100 md:bg-inherit  text-base-content">
             <li>
               <Link to="/dashboard">My Appointments</Link>
             </li>
