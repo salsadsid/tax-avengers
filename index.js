@@ -39,8 +39,20 @@ async function run() {
     const bookingCollection = client.db("tax-avengers").collection("booking");
     const userCollection = client.db("tax-avengers").collection("user");
     const membersCollection = client.db("tax-avengers").collection("members");
-    
 
+    const verifyAdmin =async (req, res, next) => {
+      const decodedEmail = req.decoded.email;
+     const query = { email: decodedEmail };
+      const user = await userCollection.findOne(query);
+      if (user?.role !== "admin") {
+        return res
+          .status(403)
+          .send({
+            message: { title: "Forbidden Access", des: "You are not an admin" },
+          });
+      }
+      next()
+    };
     app.get("/appointmentOption", async (req, res) => {
       const date = req?.query?.date;
       console.log(date);
@@ -63,11 +75,14 @@ async function run() {
       res.send(options);
     });
 
-    app.get("/apptionmentSpecialty",async(req,res)=>{
-      const query={}
-      const result = await appointmentOption.find(query).project({name:1}).toArray()
-      res.send(result)
-    })
+    app.get("/apptionmentSpecialty", async (req, res) => {
+      const query = {};
+      const result = await appointmentOption
+        .find(query)
+        .project({ name: 1 })
+        .toArray();
+      res.send(result);
+    });
     // not working
     // app.get("/v2/appointmentOption", async (req, res) => {
     //   const date = req.query.date;
@@ -167,20 +182,15 @@ async function run() {
       res.send(users);
     });
 
-    app.get("/users/admin/:email",async(req,res)=>{
-      const email= req.params.email;
-      const query={email}
-      const user= await userCollection.findOne(query)
-      res.send({isAdmin:user?.role==="admin"})
-    })
+    app.get("/users/admin/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email };
+      const user = await userCollection.findOne(query);
+      res.send({ isAdmin: user?.role === "admin" });
+    });
 
-    app.put("/users/admin/:id",verifyJWT, async (req, res) => {
-      const decodedEmail= req.decoded?.email
-      const query={email:decodedEmail}
-      const user= await userCollection.findOne(query)
-      if(user?.role!=="admin"){
-        return res.status(403).send({message:{title:"Forbidden Access",des:"You are not an admin"}})
-      }
+    app.put("/users/admin/:id", verifyJWT,verifyAdmin, async (req, res) => {
+      
       const id = req.params?.id;
       console.log(id);
       const filter = { _id: new ObjectId(id) };
@@ -200,19 +210,24 @@ async function run() {
       res.send(result);
     });
 
-    app.post("/members",async(req,res)=>{
+    app.post("/members", verifyJWT,verifyAdmin, async (req, res) => {
       const member = req.body;
-      console.log(member)
-      const result= await membersCollection.insertOne(member);
-      res.send(result)
-    })
+      const result = await membersCollection.insertOne(member);
+      res.send(result);
+    });
 
-    app.get("/members",async(req,res)=>{
-      const query={}
-      const members= await membersCollection.find(query).toArray()
-      res.send(members)
-    })
+    app.get("/members", verifyJWT, verifyAdmin, async (req, res) => {
+      const query = {};
+      const members = await membersCollection.find(query).toArray();
+      res.send(members);
+    });
 
+    app.delete("/members/:id", verifyJWT, verifyAdmin,async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const result = await membersCollection.deleteOne(filter);
+      res.send(result);
+    });
   } finally {
   }
 }
