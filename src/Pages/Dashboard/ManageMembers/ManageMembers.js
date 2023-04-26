@@ -78,7 +78,7 @@ const ManageMembers = () => {
           </tr>
         </thead>
         <tbody>
-          {members?.map((member) => (
+          {members?.length && members?.map((member) => (
             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
               <th
                 scope="row"

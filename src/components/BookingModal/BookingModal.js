@@ -9,7 +9,7 @@ const BookingModal = ({
   setAppointmentOption,
   refetch
 }) => {
-  const { name, slots } = appointmentOption;
+  const { name, slots,price } = appointmentOption;
   const date = format(selectedDate, "PP");
   const { user } = useContext(AuthContext);
   const handleBooking = (event) => {
@@ -27,6 +27,7 @@ const BookingModal = ({
       slot,
       email,
       phone,
+      price
     };
     fetch("http://localhost:5000/booking", {
       method: "POST",

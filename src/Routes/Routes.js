@@ -12,11 +12,14 @@ import AllUsers from "../Pages/Dashboard/AllUsers/AllUsers";
 import AdminRoute from "./AdminRoute";
 import AddATeamMember from "../Pages/Dashboard/AddATeamMember/AddATeamMember";
 import ManageMembers from "../Pages/Dashboard/ManageMembers/ManageMembers";
+import Payment from "../Pages/Dashboard/Payment/Payment";
+import DisplayError from "../Pages/Shared/DisplayError/DisplayError";
 
 const router = createBrowserRouter([
     {
         path:"/",
         element:<Main></Main>,
+        errorElement:<DisplayError></DisplayError>,
         children:[
             {
                 path:"/",
@@ -39,6 +42,7 @@ const router = createBrowserRouter([
     {
         path:"/dashboard",
         element:<PrivateRoute><DashboardLayout></DashboardLayout></PrivateRoute>,
+        errorElement:<DisplayError></DisplayError>,
         children:[
             {
                 path:"/dashboard",
@@ -55,6 +59,11 @@ const router = createBrowserRouter([
             {
                 path:"/dashboard/managemember",
                 element:<AdminRoute><ManageMembers></ManageMembers></AdminRoute>
+            },
+            {
+                path:"/dashboard/payment/:id",
+                element:<AdminRoute><Payment></Payment></AdminRoute>,
+                loader:({params})=>fetch(`http://localhost:5000/booking/${params.id}`)
             },
         ]
     }
