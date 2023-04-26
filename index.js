@@ -5,7 +5,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const app = express();
-
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 app.use(express.json());
 app.use(cors());
 
@@ -24,6 +24,7 @@ function verifyJWT(req, res, next) {
   const token = authHeader.split(" ")[1];
   jwt.verify(token, process.env.ACCESS_TOKEN, function (err, decoded) {
     if (err) {
+      console.log(err)
       return res.status(403).json({ message: "Forbidden Access" });
     }
     req.decoded = decoded;
@@ -39,6 +40,7 @@ async function run() {
     const bookingCollection = client.db("tax-avengers").collection("booking");
     const userCollection = client.db("tax-avengers").collection("user");
     const membersCollection = client.db("tax-avengers").collection("members");
+    const paymentCollection = client.db("tax-avengers").collection("payments");
 
     const verifyAdmin =async (req, res, next) => {
       const decodedEmail = req.decoded.email;
@@ -83,6 +85,21 @@ async function run() {
         .toArray();
       res.send(result);
     });
+
+    // add price field
+    // app.get("/addPrice",async(req,res)=>{
+    //   const query={}
+    //   const options= {upsert:true}
+    //   const updateDoc={
+    //     $set:{
+    //       price:125,
+    //     }
+    //   }
+    //   const result =await appointmentOption.updateMany(query,updateDoc,options)
+    //   res.send(result)
+    // })
+
+
     // not working
     // app.get("/v2/appointmentOption", async (req, res) => {
     //   const date = req.query.date;
@@ -162,19 +179,58 @@ async function run() {
       return res.send(result);
     });
 
+    app.get("/booking/:id",async(req,res)=>{
+      const id=req.params.id
+      const query={_id: new ObjectId(id)}
+      const booking = await bookingCollection.findOne(query)
+      res.send(booking)
+    })
+
     app.get("/jwt", async (req, res) => {
       const email = req.query.email;
       const query = { email };
       const user = await userCollection.findOne(query);
       if (user) {
         const token = jwt.sign({ email }, process.env.ACCESS_TOKEN, {
-          expiresIn: "1d",
+          expiresIn: "7d",
         });
         return res.send({ accessToken: token });
       }
 
       return res.status(403).send({ accessToken: "" });
     });
+
+    app.post("/create-payment-intent",async(req,res)=>{
+      const booking= req.body;
+      const price= booking.price;
+      const amount= price*100;
+      console.log(price)
+      const paymentIntent=await stripe.paymentIntents.create({
+        currency:"usd",
+        amount:amount,
+        "payment_method_types": [
+          "card"
+        ],
+      });
+      res.send({
+        clientSecret:paymentIntent.client_secret
+      })
+    })
+
+    app.post("/payments",async (req,res)=>{
+      const payment=req.body;
+      const result =await paymentCollection.insertOne(payment)
+      const id= payment.bookingId;
+      const filter= {_id:new ObjectId(id)}
+      const updatedDoc={
+        $set:{
+          paid:true,
+          txnId:payment.txnId
+        }
+      }
+      const updateResult= await bookingCollection.updateOne(filter,updatedDoc)
+      res.send(result)
+    })
 
     app.get("/users", async (req, res) => {
       const query = {};
