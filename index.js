@@ -3,6 +3,8 @@ const cors = require("cors");
 const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
+const nodemailer = require('nodemailer');
+const mg = require('nodemailer-mailgun-transport');
 const jwt = require("jsonwebtoken");
 const app = express();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
@@ -31,7 +33,49 @@ function verifyJWT(req, res, next) {
     next();
   });
 }
+function sendBookingEmail(booking){
+  console.log(booking)
+  const {email,service,appointmentDate,slot}=booking
+//   let transporter = nodemailer.createTransport({
+//     host: 'smtp.sendgrid.net',
+//     port: 587,
+//     auth: {
+//         user: "apikey",
+//         pass: process.env.SENDGRID_API_KEY
+//     }
+//  })
+const auth = {
+  auth: {
+    api_key: process.env.MAILGUN_KEY,
+    domain:process.env.MAILGUN_DOMAIN
+  }
+}
 
+const transporter = nodemailer.createTransport(mg(auth));
+
+ 
+ transporter.sendMail({
+  from: "salman.dnj@gmail.com", // verified sender email
+  to: email||"salman,dnj@gmail.com", // recipient email
+  subject: `Your Service: ${service} is confirmed.`, // Subject line
+  text: "Hello", // plain text body
+  html: `
+  <h3>Your appointment is confirmed.</h3>
+  <div>
+  <p>Your appointment for service: ${service}</p>
+  <p>Please visit us on: ${appointmentDate} at ${slot}</p>
+  <p>Thanks from <a href="https://tax-avengers.web.app/">Tax-Avengers </a></p>
+  <p>salsadsid loves you</p>
+  `,
+}, function(error, info){
+  if (error) {
+    console.log("ERROR",error);
+  } else {
+    console.log('Email sent: ' + info.response);
+  }
+});
+
+}
 async function run() {
   try {
     const appointmentOption = client
@@ -176,6 +220,7 @@ async function run() {
         return res.send({ acknowledged: false, message });
       }
       const result = await bookingCollection.insertOne(booking);
+      sendBookingEmail(booking)
       return res.send(result);
     });
 
